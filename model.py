@@ -2,6 +2,7 @@ import os
 import torch
 import torch.nn as nn
 import itertools
+import functools
 from torch.optim import lr_scheduler
 
 '''
@@ -12,11 +13,11 @@ def init_model(model, init_type='normal', init_gain=0.02, use_cuda=False):
 		model.to('cuda')
 	
 	def weights_init(module):
-		name = m.__class__.__name__
+		name = module.__class__.__name__
 		if name.find('Conv') != -1:
 			nn.init.normal_(module.weight.data, 0.0, init_gain)
 			if hasattr(module, 'bias') and module.bias is not None:
-				nn.init.constant_(m.bias.data, 0.0)
+				nn.init.constant_(module.bias.data, 0.0)
 		elif name.find('BatchNorm') != -1:
 			nn.init.normal_(module.weight.data, 1.0, init_gain)
 			nn.init.constant_(module.bias.data, 0.0)
@@ -24,42 +25,9 @@ def init_model(model, init_type='normal', init_gain=0.02, use_cuda=False):
 
 	return model
 
-	def weights_init(module):
-		name = m.__class__.__name__
-		if name.find('Conv') != -1:
-			nn.init.normal_(module.weight.data, 0.0, init_gain)
-			if hasattr(module, 'bias') and module.bias is not None:
-				nn.init.constant_(m.bias.data, 0.0)
-		elif name.find('BatchNorm') != -1:
-			nn.init.normal_(module.weight.data, 1.0, init_gain)
-			nn.init.constant_(module.bias.data, 0.0)
-	model.apply(weights_init)
-
-	return model
-
-# define netowrks
-def init_weights(net, init_type='normal', init_gain=0.02):
-    def init_func(m):  # define the initialization function
-        classname = m.__class__.__name__
-        if hasattr(m, 'weight') and (classname.find('Conv') != -1 or classname.find('Linear') != -1):
-            init.normal_(m.weight.data, 0.0, init_gain)
-            if hasattr(m, 'bias') and m.bias is not None:
-                init.constant_(m.bias.data, 0.0)
-        elif classname.find('BatchNorm2d') != -1:
-            init.normal_(m.weight.data, 1.0, init_gain)
-            init.constant_(m.bias.data, 0.0)
-            
-print('initialize network with %s' % init_type)
-net.apply(init_func)          
-
-def init_net(net, init_type='normal', init_gain=0.02, gpu_ids=[]):
-    if len(gpu_ids) > 0:
-        assert(torch.cuda.is_available())
-        net.to(gpu_ids[0])
-        net = torch.nn.DataParallel(net, gpu_ids)  # multi-GPUs
-    init_weights(net, init_type, init_gain=init_gain)
-    return net
-
+'''
+Generator Network
+'''
 class ResnetBlock(nn.Module):
     """Define a Resnet block, we use padding type: reflect"""
 
@@ -130,14 +98,12 @@ class ResnetGenerator(nn.Module):
         """Standard forward"""
         return self.model(input)
 
-# define netowrks
-def Generator(input_nc, output_nc, n_filter, norm='batch', dropout=False, init_type='normal', init_gain=0.02, use_cuda=False):
- 	net = None
-    	if norm == 'batch':
-        	norm_layer = functools.partial(nn.BatchNorm2d, affine=True, track_running_stats=True) 
-        	net = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=6)
-    	init.normal_(m.weight.data, 0.0, init_gain=0.02)
-	return init_net(net, init_type, init_gain, gpu_ids)
+def Generator(input_nc, output_nc, n_filter, norm='batch', dropout=False, init_type='normal', init_gain=0.02, is_gpu=False):
+	net = None
+	if norm == 'batch':
+		norm_layer = functools.partial(nn.BatchNorm2d, affine=True, track_running_stats=True) 
+		net = ResnetGenerator(input_nc, output_nc, n_filter, norm_layer=norm_layer, use_dropout=dropout, n_blocks=6)
+	return init_model(net, init_type, init_gain, is_gpu)
 
 
 '''
