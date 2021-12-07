@@ -26,8 +26,12 @@ def init_model(model, init_type='normal', init_gain=0.02, use_cuda=False):
 
 # define netowrks
 def Generator(input_nc, output_nc, n_filter, norm='batch', dropout=False, init_type='normal', init_gain=0.02, use_cuda=False):
-
-	return
+ 	net = None
+    	if norm == 'batch':
+        	norm_layer = functools.partial(nn.BatchNorm2d, affine=True, track_running_stats=True) 
+        	net = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=6)
+    	init.normal_(m.weight.data, 0.0, init_gain=0.02)
+	return init_net(net, init_type, init_gain, gpu_ids)
 
 
 '''
