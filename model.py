@@ -133,7 +133,7 @@ class PatchGANDiscriminator(nn.Module):
 			nn.Conv2d(n_filter*k*2, 1 , kernel_size=kernel, stride=1, padding=padding, bias=bias)
 		]
 		
-		self.model = nn.Sequential(*layer)
+		self.model = nn.Sequential(*layers)
 	
 	def forward(self, input):
 		return self.model(input)
@@ -173,6 +173,7 @@ class CycleGAN():
 		self.is_train = args.is_train
 		self.device = torch.device('cuda') if args.is_gpu else torch.device('cpu')
 		self.save_dir = os.path.join(args.checkpoints_dir, args.name)
+		self.print_dir = os.path.join(args.print_dir, args.name)
 
 		self.loss_names = ['genLoss_A', 'disLoss_A', 'cycleLoss_A', 'genLoss_B', 'disLoss_B', 'cycleLoss_B']
 		self.visual_names = ['real_A', 'fake_B', 'rec_A', 'real_B', 'fake_A', 'rec_B']
