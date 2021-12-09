@@ -111,7 +111,7 @@ Discriminator Network
 '''
 class PatchGANDiscriminator(nn.Module):
 	# Using Patch GAN as Discriminator 
-	def __int__(self, input_nc, n_filter, n_layers=3, norm_layer=nn.BatchNorm2d):
+	def __init__(self, input_nc, n_filter, n_layers=3, norm_layer=nn.BatchNorm2d):
 		super(PatchGANDiscriminator, self).__init__()
 		
 		bias = norm_layer != nn.BatchNorm2d
@@ -165,11 +165,12 @@ class GANLoss(nn.Module):
 '''
 Cycle GAN model
 '''
-class CycleGAN():
+class CycleGAN:
 
-	def __init_(self, args):
+	def __init__(self, args):
 		super(CycleGAN, self).__init__()
 		self.args = args
+		print(args)
 		self.is_train = args.is_train
 		self.device = torch.device('cuda') if args.is_gpu else torch.device('cpu')
 		self.save_dir = os.path.join(args.checkpoints_dir, args.name)
@@ -189,7 +190,7 @@ class CycleGAN():
 			self.dis_B = Discriminator(args.input_nc, args.n_filter, args.n_layers, args.norm, args.init_type, args.init_gain, args.is_gpu)
 			# define loss
 			self.ganLoss = GANLoss().to(self.device)
-			self.cycleLoss = torch.nn.L1loss()
+			self.cycleLoss = torch.nn.L1Loss()
 			# define optimizer
 			self.optimizer_G = torch.optim.Adam(itertools.chain(self.gen_A.parameters(), self.gen_B.parameters()), lr=args.lr, betas=(args.beta, 0.999))
 			self.optimizer_D = torch.optim.Adam(itertools.chain(self.dis_A.parameters(), self.dis_B.parameters()), lr=args.lr, betas=(args.beta, 0.999))
@@ -227,8 +228,8 @@ class CycleGAN():
 
 	def forward(self, input_A, input_B):
 		# compute fake and rec pictures using generator
-		self.real_A = input_A
-		self.real_B = input_B
+		self.real_A = input_A.to(self.device)
+		self.real_B = input_B.to(self.device)
 		self.fake_B = self.gen_A(self.real_A)
 		self.fake_A = self.gen_B(self.real_B)
 		self.rec_A = self.gen_B(self.fake_B)
