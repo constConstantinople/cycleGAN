@@ -4,6 +4,7 @@ import numpy as np
 import torch
 import torchvision
 import torchvision.transforms as transforms
+from PIL import Image
 
 class Mydataset(torch.utils.data.Dataset):
     def __init__(self, set):
@@ -28,9 +29,11 @@ class Mydataset(torch.utils.data.Dataset):
         return len(self.dataset)
 
 class FaceDataSet:
-    def __init__(self, batch_size=5, dataset_path=""):
+    def __init__(self, args, batch_size=5, dataset_path=""):
         self.batch_size = batch_size
         self.dataset_path = dataset_path
+        self.resize = args.resize
+        self.crop_size = args.crop_size
         self.trans = self.get_transform()
         self.train_loader, self.val_loader = self.get_dataloader()
         
@@ -38,8 +41,10 @@ class FaceDataSet:
     def get_transform(self):
         
         trans_list = [
+            transforms.Resize(self.resize, Image.BICUBIC),
+            transforms.RandomCrop(self.crop_size),
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ]
         trans = transforms.Compose(trans_list)
         
