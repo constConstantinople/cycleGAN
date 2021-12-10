@@ -70,7 +70,7 @@ def train(dataset, model, config):
 if __name__ == '__main__':
     
     config = Arguments().parse()
-    dataSet = FaceDataSet(batch_size=config.batch_size, dataset_path=config.dataset_path)
+    dataSet = FaceDataSet(config, batch_size=config.batch_size, dataset_path=config.dataset_path)
     trainModel = CycleGAN(config)
     
     if config.is_train:
