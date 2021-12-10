@@ -34,6 +34,8 @@ class Arguments():
 		parser.add_argument('--lr_policy', type=str, default='linear')
 		parser.add_argument('--lambda_A', type=float, default=10.0)
 		parser.add_argument('--lambda_B', type=float, default=10.0)
+		parser.add_argument('--resize', type=int, default=286)
+		parser.add_argument('--crop_size', type=int, default=256)
 
 		self.parser = parser
 		return parser.parse_args()
