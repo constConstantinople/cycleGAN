@@ -21,8 +21,8 @@ from generator import Generator
 
 def train_function(disc_face, disc_comic, gen_face, gen_comic, loader, opt_disc, opt_gen, L1, MSE, d_scaler, g_scaler):
     
-    H_reals = 0
-    H_fakes = 0
+    face_reals = 0
+    comic_fakes = 0
     loop = tqdm(loader, leave=True)
 
     for idx, (comic, face) in enumerate(loop):
@@ -86,7 +86,7 @@ def train_function(disc_face, disc_comic, gen_face, gen_comic, loader, opt_disc,
             save_image(face_fake*0.5+0.5, f"saved_images/horse_{idx}.png")
             save_image(comic_fake*0.5+0.5, f"saved_images/zebra_{idx}.png")
 
-        loop.set_postfix(H_real=H_reals/(idx+1), H_fake=H_fakes/(idx+1))
+        loop.set_postfix(face_real=face_reals/(idx+1), face_fake=face_fakes/(idx+1))
 
 
 
