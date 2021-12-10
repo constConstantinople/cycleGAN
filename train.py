@@ -9,6 +9,7 @@ import time
 from arguments import Arguments
 from dataset import FaceDataSet
 from PIL import Image
+import random
 
 def tensor2img(img):
     if not isinstance(img, np.ndarray):
@@ -28,6 +29,7 @@ def train(dataset, model, config):
     for epoch in range(config.n_epochs):
         n_iter = 0
         # epoch_start = time.time()
+        print_iter = random.randint(0,len(train_loader)-1) * config.batch_size
         
         for batch_data in train_loader:
             # print(len(batch_data))
@@ -42,37 +44,38 @@ def train(dataset, model, config):
                 print('print loss after %d iter' % (n_iter))
                 print("G_A: %f, G_B: %f, D_A: %f, D_B: %f, cycle_A: %f, cycle_B: %f" % (model.genLoss_A,model.genLoss_B,model.disLoss_A,model.disLoss_B,model.cycleLoss_A,model.cycleLoss_B))
             
-        if epoch % config.save_freq == 0:
-            print('saving the model, epoch %d' % (epoch))
-            # model.model_save(epoch)
+        # if epoch % config.save_freq == 0:
+        #     # print('saving the model, epoch %d' % (epoch))
+        #     # model.model_save(epoch)
             # TO DO: print pictures from model.real_A,fake_B,rec_A,real_B,fake_A,rec_B
-            real_A, real_B = tensor2img(model.real_A), tensor2img(model.real_B)
-            fake_A, fake_B = tensor2img(model.fake_A), tensor2img(model.fake_B)
-            rec_A, rec_B = tensor2img(model.fake_A), tensor2img(model.fake_B)
+            if n_iter == print_iter:
+                real_A, real_B = tensor2img(model.real_A), tensor2img(model.real_B)
+                fake_A, fake_B = tensor2img(model.fake_A), tensor2img(model.fake_B)
+                rec_A, rec_B = tensor2img(model.fake_A), tensor2img(model.fake_B)
             
-            print("Saving pictures at epoch", epoch)
+                print("Saving pictures at epoch", epoch)
             
-            fig = plt.figure()
-            ax = fig.add_subplot(3, 2, 1)
-            ax.imshow(real_A)
-            ax = fig.add_subplot(3, 2, 2)
-            ax.imshow(real_B)
-            ax = fig.add_subplot(3, 2, 3)
-            ax.imshow(fake_A)
-            ax = fig.add_subplot(3, 2, 4)
-            ax.imshow(fake_B)
-            ax = fig.add_subplot(3, 2, 5)
-            ax.imshow(rec_A)
-            ax = fig.add_subplot(3, 2, 6)
-            ax.imshow(rec_B)
-            plt.show()
+                fig = plt.figure()
+                ax = fig.add_subplot(3, 2, 1)
+                ax.imshow(real_A)
+                ax = fig.add_subplot(3, 2, 2)
+                x.imshow(real_B)
+                ax = fig.add_subplot(3, 2, 3)
+                ax.imshow(fake_A)
+                ax = fig.add_subplot(3, 2, 4)
+                ax.imshow(fake_B)
+                ax = fig.add_subplot(3, 2, 5)
+                ax.imshow(rec_A)
+                ax = fig.add_subplot(3, 2, 6)
+                ax.imshow(rec_B)
+                plt.show()
             
-            img_save(real_A, config.print_dir, str(epoch) + '_real_A')
-            img_save(real_B, config.print_dir, str(epoch) + '_real_B')
-            img_save(fake_A, config.print_dir, str(epoch) + '_fake_A')
-            img_save(fake_B, config.print_dir, str(epoch) + '_fake_B')
-            img_save(rec_A, config.print_dir, str(epoch) + '_rec_A')
-            img_save(rec_B, config.print_dir, str(epoch) + '_rec_B')
+                img_save(real_A, config.print_dir, str(epoch) + '_real_A.jpg')
+                img_save(real_B, config.print_dir, str(epoch) + '_real_B.jpg')
+                img_save(fake_A, config.print_dir, str(epoch) + '_fake_A.jpg')
+                img_save(fake_B, config.print_dir, str(epoch) + '_fake_B.jpg')
+                img_save(rec_A, config.print_dir, str(epoch) + '_rec_A.jpg')
+                img_save(rec_B, config.print_dir, str(epoch) + '_rec_B.jpg')
 
         model.lr_update()
 
