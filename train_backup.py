@@ -108,7 +108,7 @@ def main():
     )
 
     L1 = nn.L1Loss()
-    mse = nn.MSELoss()
+    MSE = nn.MSELoss()
 
     if config.LOAD_MODEL:
         load_checkpoint(
@@ -147,7 +147,7 @@ def main():
     d_scaler = torch.cuda.amp.GradScaler()
 
     for epoch in range(config.NUM_EPOCHS):
-        train_function(disc_face, disc_comic, gen_face, gen_comic, loader, opt_disc, opt_gen, L1, mse, d_scaler, g_scaler)
+        train_function(disc_face, disc_comic, gen_face, gen_comic, loader, opt_disc, opt_gen, L1, MSE, d_scaler, g_scaler)
 
         if config.SAVE_MODEL:
             save_checkpoint(gen_face, opt_gen, filename=config.CHECKPOINT_GEN_H)
