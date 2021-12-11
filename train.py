@@ -51,7 +51,7 @@ def train(dataset, model, config):
             if n_iter == print_iter:
                 real_A, real_B = tensor2img(model.real_A), tensor2img(model.real_B)
                 fake_A, fake_B = tensor2img(model.fake_A), tensor2img(model.fake_B)
-                rec_A, rec_B = tensor2img(model.fake_A), tensor2img(model.fake_B)
+                rec_A, rec_B = tensor2img(model.rec_A), tensor2img(model.rec_B)
             
                 print("Saving pictures at epoch", epoch)
             
@@ -59,7 +59,7 @@ def train(dataset, model, config):
                 ax = fig.add_subplot(3, 2, 1)
                 ax.imshow(real_A)
                 ax = fig.add_subplot(3, 2, 2)
-                x.imshow(real_B)
+                ax.imshow(real_B)
                 ax = fig.add_subplot(3, 2, 3)
                 ax.imshow(fake_A)
                 ax = fig.add_subplot(3, 2, 4)
